@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore"; // Si usarás Firestore
 import { getStorage } from "firebase/storage"; // Si usarás imágenes
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDml-13MSnUTyxdB4-Zz_fwYKtgJN2qI2c",
-  authDomain: "olemita-c79ad.firebaseapp.com",
-  projectId: "olemita-c79ad",
-  storageBucket: "olemita-c79ad.appspot.com", // corregido el dominio
-  messagingSenderId: "499325574137",
-  appId: "1:499325574137:web:92040b4341530e6d343b28"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
