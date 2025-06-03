@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'; // ✅ incluye useEffect des
 import { useCart } from './components/CartContext';
 import { db } from './firebaseConfig'; // ✅ tu configuración de Firebase
 import { collection, getDocs, addDoc } from 'firebase/firestore'; // ✅ funciones de Firestore
+import { CartProvider } from './components/CartContext'; // ✅ ESTA LÍNEA FALTABA
 
-import { CartProvider } from './components/CartContext';
+import BackButtonHandler from './components/BackButtonHandler';
 import useLogin from './components/useLogin';
 import LoginModal from './components/LoginModal';
 import AdminBar from './components/AdminBar';
@@ -35,7 +36,6 @@ const isAdmin = currentUser?.toLowerCase() === 'ti';
   const [vistaActual, setVistaActual] = useState('home');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const { isCartOpen, setIsCartOpen } = useCart();
 
   const [productos, setProductos] = useState([]);
 const [categorias, setCategorias] = useState([]);
@@ -75,29 +75,6 @@ useEffect(() => {
 }, []);
 
 // 🔹 2. Botón físico "atrás" en celular (manejo del historial y carrito)
-useEffect(() => {
-  const handlePopState = (e) => {
-    e.preventDefault();
-
-    if (isCartOpen) {
-      setIsCartOpen(false);
-      window.history.pushState(null, null, window.location.pathname);
-      return;
-    }
-
-    if (vistaActual !== 'home') {
-      setVistaActual('home');
-      window.history.pushState(null, null, window.location.pathname);
-    }
-  };
-
-  window.history.pushState(null, null, window.location.pathname);
-  window.addEventListener('popstate', handlePopState);
-
-  return () => {
-    window.removeEventListener('popstate', handlePopState);
-  };
-}, [vistaActual, isCartOpen]);
 
   const handleNavigate = (vista) => {
     setVistaActual(vista);
@@ -112,9 +89,14 @@ useEffect(() => {
     setCategorias(prev => [...prev, nuevaCategoria]);
   };
 
-  return (
-    <CartProvider>
-      <div className="font-sans">
+return (
+  <CartProvider>
+    <BackButtonHandler 
+      vistaActual={vistaActual} 
+      setVistaActual={setVistaActual} 
+    />
+    <div className="font-sans">
+
 {currentUser && (
 <AdminBar
   currentUser={currentUser}
