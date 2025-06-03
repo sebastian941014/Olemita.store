@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'; // ✅ incluye useEffect desde aquí
+import { useCart } from './components/CartContext';
 import { db } from './firebaseConfig'; // ✅ tu configuración de Firebase
 import { collection, getDocs, addDoc } from 'firebase/firestore'; // ✅ funciones de Firestore
 
@@ -34,6 +35,7 @@ const isAdmin = currentUser?.toLowerCase() === 'ti';
   const [vistaActual, setVistaActual] = useState('home');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const { isCartOpen, setIsCartOpen } = useCart();
 
   const [productos, setProductos] = useState([]);
 const [categorias, setCategorias] = useState([]);
@@ -54,6 +56,7 @@ useEffect(() => {
   cargarCategorias();
 }, []); // ✅ PRIMER useEffect
 
+// 🔹 1. Cargar productos
 useEffect(() => {
   const cargarProductos = async () => {
     try {
@@ -69,7 +72,32 @@ useEffect(() => {
   };
 
   cargarProductos();
-}, []); // ✅ SEGUNDO useEffect
+}, []);
+
+// 🔹 2. Botón físico "atrás" en celular (manejo del historial y carrito)
+useEffect(() => {
+  const handlePopState = (e) => {
+    e.preventDefault();
+
+    if (isCartOpen) {
+      setIsCartOpen(false);
+      window.history.pushState(null, null, window.location.pathname);
+      return;
+    }
+
+    if (vistaActual !== 'home') {
+      setVistaActual('home');
+      window.history.pushState(null, null, window.location.pathname);
+    }
+  };
+
+  window.history.pushState(null, null, window.location.pathname);
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [vistaActual, isCartOpen]);
 
   const handleNavigate = (vista) => {
     setVistaActual(vista);
