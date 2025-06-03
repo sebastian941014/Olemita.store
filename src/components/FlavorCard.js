@@ -81,7 +81,7 @@ return (
   onClick={handleAddToCart}
   className={`bg-${safeColor}-500 hover:bg-${safeColor}-600 text-white py-2 px-6 rounded-full transition w-full`}
 >
-  Ordenar – ${Number(price).toLocaleString('es-CO')}
+  Ordenar
 </button>
     </div>
   );
